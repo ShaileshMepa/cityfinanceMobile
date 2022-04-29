@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/envatomarket.iml" filepath="$PROJECT_DIR$/.idea/modules/envatomarket.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/envatomarket.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/envatomarket.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1080196784/envatomarket.react-native-community_async-storage.iml" filepath="$PROJECT_DIR$/.idea/modules/-1080196784/envatomarket.react-native-community_async-storage.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1879378867/envatomarket.react-native-community_masked-view.iml" filepath="$PROJECT_DIR$/.idea/modules/-1879378867/envatomarket.react-native-community_masked-view.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1273232924/envatomarket.react-native-document-picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-1273232924/envatomarket.react-native-document-picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-177513174/envatomarket.react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/-177513174/envatomarket.react-native-gesture-handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1171043491/envatomarket.react-native-image-crop-picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-1171043491/envatomarket.react-native-image-crop-picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1227735524/envatomarket.react-native-image-picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-1227735524/envatomarket.react-native-image-picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1005883909/envatomarket.react-native-picker_picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-1005883909/envatomarket.react-native-picker_picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1861603662/envatomarket.react-native-reanimated.iml" filepath="$PROJECT_DIR$/.idea/modules/-1861603662/envatomarket.react-native-reanimated.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-831510310/envatomarket.react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/-831510310/envatomarket.react-native-safe-area-context.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-561647246/envatomarket.react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/-561647246/envatomarket.react-native-screens.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1668561720/envatomarket.react-native-svg.iml" filepath="$PROJECT_DIR$/.idea/modules/-1668561720/envatomarket.react-native-svg.iml" />
+    </modules>
+  </component>
+</project>
