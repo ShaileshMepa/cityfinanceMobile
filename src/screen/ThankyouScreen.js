@@ -263,7 +263,7 @@ export class Documenttosign extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -746,7 +746,7 @@ export class Documenttosign extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>

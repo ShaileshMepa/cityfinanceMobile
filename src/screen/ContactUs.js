@@ -12,11 +12,6 @@ import {
   ScrollView,
   BackHandler,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import Svg, { Path } from "react-native-svg";
 import MenuDrawer from "react-native-side-drawer";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Picker } from "@react-native-picker/picker";
@@ -35,6 +30,9 @@ export class ContactUs extends Component {
           relationship__c: "Request a statement",
         },
       ],
+      feedbackmessage: "",
+      relationship_Selected: "General",
+      loanname: "",
     };
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
@@ -86,9 +84,81 @@ export class ContactUs extends Component {
       });
   }
 
+  SubmitButtonCall = () => {
+    if (this.state.relationship_Selected === "General") {
+      this.callGeneral();
+    } else {
+      this.callRequestAStatement();
+    }
+  };
+
+  callRequestAStatement = () => {
+    fetch("https://cityfinance-app.herokuapp.com/api/mail-loans-statement", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: JSON.stringify({
+        loan_name: this.state.loanname,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseText) => {
+        console.log(" responseText. Request>>>", responseText);
+        alert(
+          "Your feedback has been sent. Please allow us up to 1 business day for a response."
+        );
+        this.setState({ loanname: "", relationship_Selected: "General" });
+        if (responseText.success == true) {
+          console.log(" responseText.success>>>", responseText.data);
+          // alert(
+          //   "Your feedback has been sent. Please allow us up to 1 business day for a response."
+          // );
+        }
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
+
+  callGeneral = () => {
+    fetch("https://cityfinance-app.herokuapp.com/api/mail-loans-feedback", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: JSON.stringify({
+        feedback: this.state.feedbackmessage,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseText) => {
+        console.log(" responseText. Request>>>", responseText);
+
+        this.setState({
+          feedbackmessage: "",
+          relationship_Selected: "General",
+        });
+        alert(
+          "Your feedback has been sent. Please allow us up to 1 business day for a response."
+        );
+        if (responseText.success == true) {
+          console.log(" responseText.success>>>", responseText.data);
+          // alert(
+          //   "Your feedback has been sent. Please allow us up to 1 business day for a response."
+          // );
+        }
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
+
   ChangeCity = (selectedCIty) => {
     console.log("Selected State", selectedCIty);
-    this.setState({ RelationSelect: selectedCIty });
+    this.setState({ relationship_Selected: selectedCIty });
     // this.setState({ selectedCIty: selectedCIty, Town: selectedCIty });
   };
 
@@ -108,6 +178,16 @@ export class ContactUs extends Component {
       this.props.navigation.navigate("Activities");
       console.log("index 4");
     }
+  };
+
+  Logout = () => {
+    AsyncStorage.setItem("login", "false").catch((err) => {
+      console.log("error is: " + err);
+    });
+    AsyncStorage.setItem("token", "").catch((err) => {
+      console.log("error is: " + err);
+    });
+    this.props.navigation.navigate("LoginScreen");
   };
 
   toggleOpen = () => {
@@ -144,7 +224,7 @@ export class ContactUs extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -392,7 +472,7 @@ export class ContactUs extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>
@@ -469,7 +549,7 @@ export class ContactUs extends Component {
                 onValueChange={(itemValue, itemIndex) =>
                   this.ChangeCity(itemValue)
                 }
-                selectedValue={this.state.RelationSelect}
+                selectedValue={this.state.relationship_Selected}
                 dropdownIconColor="#f9f9f9"
               >
                 {Object.entries(this.state.relationshipList).map(([key, v]) => (
@@ -490,19 +570,40 @@ export class ContactUs extends Component {
                 marginTop: 10,
               }}
             >
-              <View style={{ padding: 15, marginTop: 0 }}>
-                <TextInput
-                  placeholder="Please Provide feedback on my loan application"
-                  style={{
-                    height: 200,
-                    width: "100%",
-                    textAlignVertical: "top",
-                    fontSize: 13,
-                  }}
-                ></TextInput>
-              </View>
+              {this.state.relationship_Selected == "General" ? (
+                <View style={{ padding: 15, marginTop: 0 }}>
+                  <TextInput
+                    onChangeText={(text) =>
+                      this.setState({ feedbackmessage: text })
+                    }
+                    value={this.state.feedbackmessage}
+                    placeholder="Please Provide feedback on my loan application"
+                    style={{
+                      height: 200,
+                      width: "100%",
+                      textAlignVertical: "top",
+                      fontSize: 13,
+                    }}
+                  ></TextInput>
+                </View>
+              ) : (
+                <View style={{ padding: 15, marginTop: 0 }}>
+                  <TextInput
+                    onChangeText={(text) => this.setState({ loanname: text })}
+                    value={this.state.loanname}
+                    placeholder="Please Provide loan name for statement"
+                    style={{
+                      height: 40,
+                      width: "100%",
+                      textAlignVertical: "top",
+                      fontSize: 13,
+                    }}
+                  ></TextInput>
+                </View>
+              )}
             </View>
             <TouchableOpacity
+              onPress={() => this.SubmitButtonCall()}
               style={{
                 width: "40%",
                 height: 50,

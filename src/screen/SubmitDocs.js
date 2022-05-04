@@ -292,7 +292,7 @@ export class SubmitDocs extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -610,7 +610,7 @@ export class SubmitDocs extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>
@@ -942,7 +942,7 @@ export class SubmitDocs extends Component {
                       }}
                     />
                   </View>
-                  {/* <View
+                  <View
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-around",
@@ -962,7 +962,10 @@ export class SubmitDocs extends Component {
                     </Text>
                     <TouchableOpacity
                       onPress={() =>
-                        this.props.navigation.navigate("Capturereference")
+                        this.props.navigation.navigate("Capturereference", {
+                          DocumentImages: this.state.imageDocument,
+                          curruntData: this.state.curruntData,
+                        })
                       }
                       style={{
                         width: "50%",
@@ -999,7 +1002,7 @@ export class SubmitDocs extends Component {
                         Add Reference
                       </Text>
                     </TouchableOpacity>
-                  </View> */}
+                  </View>
                   <View
                     style={{
                       flexDirection: "row",

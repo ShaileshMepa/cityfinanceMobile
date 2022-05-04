@@ -54,6 +54,10 @@ export class DocumentScreen extends Component {
       imageDocument1: null,
       imageDocument2: null,
       imageDocument3: null,
+      imagePath2: "",
+      imagetype2: "",
+      imagePath3: "",
+      imagetype2: "",
     };
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
@@ -209,19 +213,14 @@ export class DocumentScreen extends Component {
     });
   };
 
-  getApplicationDocuments = () => {
-    console.log("Parameters>>>", {
-      uri: this.state.imagePath,
-      type: this.state.imagetype,
-      name: "image.png",
-    });
+  getApplicationDocuments1 = () => {
     const RegisterData = new FormData();
     RegisterData.append("file", {
       uri: this.state.imagePath,
       type: this.state.imagetype,
       name: "image.png",
     });
-    RegisterData.append("applicationid", "aAr1e00000000QbCAI");
+    RegisterData.append("applicationid", this.state.curruntData.name);
     console.log("RegisterData", JSON.stringify({ RegisterData }));
     fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
       method: "POST",
@@ -234,13 +233,62 @@ export class DocumentScreen extends Component {
       .then((response) => response.json())
       .then((responseText) => {
         console.log("getApplicationDocuments", responseText);
-        this.setState({
-          captureareferance: false,
-          thankyoufunded: true,
-          uploadDoc: false,
-          requestaloan: false,
-          opendrawer: false,
-        });
+      })
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
+  };
+
+  getApplicationDocuments2 = () => {
+    const RegisterData = new FormData();
+    RegisterData.append("file", {
+      uri: this.state.imagePath2,
+      type: this.state.imagetype2,
+      name: "image.png",
+    });
+    RegisterData.append("applicationid", this.state.curruntData.name);
+    console.log("RegisterData", JSON.stringify({ RegisterData }));
+    fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "multipart/form-data", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: RegisterData,
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log("getApplicationDocuments", responseText);
+      })
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
+  };
+
+  getApplicationDocuments3 = () => {
+    const RegisterData = new FormData();
+    RegisterData.append("file", {
+      uri: this.state.imagePath3,
+      type: this.state.imagetype3,
+      name: "image3.png",
+    });
+    RegisterData.append("applicationid", this.state.curruntData.name);
+    console.log("RegisterData", JSON.stringify({ RegisterData }));
+    fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "multipart/form-data", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: RegisterData,
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log("getApplicationDocuments", responseText);
       })
       .catch((error) => {
         console.log("getApplicationDocuments error", error);
@@ -286,11 +334,15 @@ export class DocumentScreen extends Component {
     }).then((image) => {
       // this.state.DocumentUpload.push(image);
 
-      this.setState({ imageDocument1: image });
+      this.setState({
+        imageDocument1: image,
+        imagetype: image?.mime,
+        imagePath: image?.path,
+      });
       // this.componentDidMount();
-      // setTimeout(() => {
-      //   this.getApplicationDocuments();
-      // }, 500);
+      setTimeout(() => {
+        this.getApplicationDocuments1();
+      }, 500);
     });
   };
 
@@ -305,11 +357,15 @@ export class DocumentScreen extends Component {
     }).then((image) => {
       // this.state.DocumentUpload.push(image);
 
-      this.setState({ imageDocument2: image });
+      this.setState({
+        imageDocument2: image,
+        imagetype2: image?.mime,
+        imagePath2: image?.path,
+      });
       // this.componentDidMount();
-      // setTimeout(() => {
-      //   this.getApplicationDocuments();
-      // }, 500);
+      setTimeout(() => {
+        this.getApplicationDocuments2();
+      }, 500);
     });
   };
 
@@ -324,11 +380,16 @@ export class DocumentScreen extends Component {
     }).then((image) => {
       // this.state.DocumentUpload.push(image);
 
-      this.setState({ imageDocument3: image });
+      this.setState({
+        imageDocument3: image,
+
+        imagetype3: image?.mime,
+        imagePath3: image?.path,
+      });
       // this.componentDidMount();
-      // setTimeout(() => {
-      //   this.getApplicationDocuments();
-      // }, 500);
+      setTimeout(() => {
+        this.getApplicationDocuments3();
+      }, 500);
     });
   };
 
@@ -387,7 +448,7 @@ export class DocumentScreen extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -791,7 +852,7 @@ export class DocumentScreen extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>
@@ -1245,7 +1306,7 @@ export class DocumentScreen extends Component {
                                 color: "#000",
                               }}
                             >
-                              1.
+                              2.
                             </Text>
                           </View>
                           <View
@@ -1342,7 +1403,7 @@ export class DocumentScreen extends Component {
                                 color: "#000",
                               }}
                             >
-                              1.
+                              3.
                             </Text>
                           </View>
                           <View

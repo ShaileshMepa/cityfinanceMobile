@@ -149,30 +149,30 @@ export class HomeScreen extends Component {
       this.callInit();
     }, 1000);
 
-    fetch("https://cityfinance-app.herokuapp.com/api/loanBalance", {
-      method: "GET",
-      headers: new Headers({
-        "Content-Type": "application/json", // <-- Specifying the Content-Type
-        Authorization: "Bearer " + AuthToken,
-      }),
-    })
-      .then((response) => response.json())
-      .then((responseText) => {
-        console.log("Get Current App Pleas111", responseText);
+    // fetch("https://cityfinance-app.herokuapp.com/api/loanBalance", {
+    //   method: "GET",
+    //   headers: new Headers({
+    //     "Content-Type": "application/json", // <-- Specifying the Content-Type
+    //     Authorization: "Bearer " + AuthToken,
+    //   }),
+    // })
+    //   .then((response) => response.json())
+    //   .then((responseText) => {
+    //     console.log("Get Current App Pleas111", responseText);
 
-        if (responseText.status === "success") {
-          this.setState({
-            loanbalanceamount: responseText.data[0].loan__loan_amount__c,
-          });
-        } else {
-          alert(">>", responseText.message);
-        }
-      })
-      .catch((error) => {
-        console.log("Get Current App", error);
+    //     if (responseText.status === "success") {
+    //       this.setState({
+    //         loanbalanceamount: responseText.data[0].loan__loan_amount__c,
+    //       });
+    //     } else {
+    //       alert(">>", responseText.message);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log("Get Current App", error);
 
-        // alert(error);
-      });
+    //     // alert(error);
+    //   });
   }
 
   callInit = async () => {
@@ -293,6 +293,8 @@ export class HomeScreen extends Component {
   };
 
   Logout = () => {
+    this.setState({ opendrawer: false });
+
     AsyncStorage.setItem("login", "false").catch((err) => {
       console.log("error is: " + err);
     });
@@ -348,7 +350,7 @@ export class HomeScreen extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.closeandnavigateedit()}
@@ -646,6 +648,33 @@ export class HomeScreen extends Component {
       });
   };
 
+  requestastatement = (item) => {
+    console.log("Daras", item.name);
+
+    fetch("https://cityfinance-app.herokuapp.com/api/mail-loans-statement", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: JSON.stringify({
+        loan_name: item.name,
+      }),
+    })
+      .then((response) => response.json())
+      .then(async (responseText) => {
+        console.log(" responseText. Request>>>", responseText);
+        if (responseText.success == true) {
+          console.log(" responseText.success>>>", responseText.data);
+          alert(responseText.message);
+          this.setState({ requestModal: true });
+        }
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
+
   Uploadloan2 = async () => {
     try {
       const res = await DocumentPicker.pick({
@@ -828,7 +857,7 @@ export class HomeScreen extends Component {
                   maxWidth: 250,
                 }}
               >
-                Your statement request has been sent. please allow up to 1
+                Your statement request has been sent. Please allow up to 1
                 buisness day for a response.
               </Text>
               <TouchableOpacity
@@ -922,7 +951,7 @@ export class HomeScreen extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>
@@ -1375,7 +1404,7 @@ export class HomeScreen extends Component {
                         </View>
                         <TouchableOpacity
                           onPress={() =>
-                            this.props.navigation.navigate("SubmitDocs", {
+                            this.props.navigation.navigate("ClicktoSign", {
                               curruntData: item,
                             })
                           }
@@ -1623,7 +1652,7 @@ export class HomeScreen extends Component {
                         </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => this.setState({ requestModal: true })}
+                        onPress={() => this.requestastatement(item)}
                         style={{
                           width: "90%",
                           height: 50,

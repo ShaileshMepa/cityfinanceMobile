@@ -21,8 +21,10 @@ export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "tany123@dispostable.com",
-      password: "Vodaf@123",
+      // email: "tany123@dispostable.com",
+      email: "",
+      password: "",
+      // pin: "1111",
       pin: "",
       loading: false,
       show: false,
@@ -87,7 +89,6 @@ export default class LoginScreen extends React.Component {
       .then(async (responseText) => {
         console.log(" responseText.Pillllll>>>", responseText);
         this.setState({
-          hasPins: false,
           pin: "",
         });
         if (responseText.success === true) {
@@ -110,65 +111,64 @@ export default class LoginScreen extends React.Component {
   LoginApICalling = () => {
     if (this.state.email === "") {
       alert("Please Provide Email!");
-    } else if (this.state.password === "") {
-      alert("Please Provide Password!");
     } else {
-      if (this.state.hasPins === true) {
-        this.CallPiAdd();
-      } else {
-        this.setState({ loading: true });
-        fetch("https://cityfinance-app.herokuapp.com/api/login", {
-          method: "POST",
-          headers: new Headers({
-            "Content-Type": "application/json", // <-- Specifying the Content-Type
-          }),
-          body: JSON.stringify({
-            email: this.state.email.replace(/ /g, ""),
-            password: this.state.password,
-            pin: "",
-          }),
-        })
-          .then((response) => response.json())
-          .then(async (responseText) => {
-            this.setState({ loading: false });
+      this.setState({ loading: true });
+      fetch("https://cityfinance-app.herokuapp.com/api/login", {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json", // <-- Specifying the Content-Type
+        }),
+        body: JSON.stringify({
+          email: this.state.email.replace(/ /g, ""),
+          password: this.state.password,
+          pin: this.state.pin,
+        }),
+      })
+        .then((response) => response.json())
+        .then(async (responseText) => {
+          this.setState({ loading: false });
+          // this.state = {
+          //   token: responseText.data.token.toString(),
+          // };
+          console.log(" responseText.GHetting>>>", responseText);
+          if (responseText.success == true) {
+            console.log(" responseText.success>>>", responseText.data.token);
             this.state = {
-              token: responseText.data.token.toString(),
+              email: "",
+              password: "",
+              pin: "",
             };
-            console.log(" responseText.GHetting>>>", responseText);
-            if (responseText.success == true) {
-              console.log(" responseText.success>>>", responseText.data.token);
+            if (responseText.data.hasPin === true) {
+              await AsyncStorage.setItem("token", responseText.data.token);
 
-              if (responseText.data.hasPin === true) {
-                await AsyncStorage.setItem("token", responseText.data.token);
+              this.props.navigation.push("HomeScreen");
+              AsyncStorage.setItem("login", "true").catch((err) => {
+                console.log("error is: " + err);
+              });
 
-                this.setState({
-                  hasPins: true,
-                  token: responseText.data.token.toString(),
-                });
-              } else {
-                await AsyncStorage.setItem("token", responseText.data.token);
-                this.state = {
-                  email: "",
-                  password: "",
-                };
-                this.props.navigation.navigate("Configure");
-              }
-
-              // AsyncStorage.setItem("login", "true").catch((err) => {
-              //   console.log("error is: " + err);
-              // });
-              // this.props.navigation.push("HomeScreen");
+              // alert(responseText.message.toString());
             } else {
-              alert(responseText.error.toString(), responseText.message);
+              await AsyncStorage.setItem("token", responseText.data.token);
+              this.state = {
+                email: "",
+                password: "",
+                pin: "",
+              };
+              this.props.navigation.navigate("Configure");
             }
-          })
-          .catch((error) => {
-            this.setState({ loading: false });
 
-            console.log("Error:", error);
-            // alert("Error:", error.toString());
-          });
-      }
+            // AsyncStorage.setItem("login", "true").catch((err) => {
+            //   console.log("error is: " + err);
+            // });
+            // this.props.navigation.push("HomeScreen");
+          } else {
+            alert(responseText.error.toString(), responseText.message);
+          }
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          console.log("Error:", error);
+        });
     }
   };
 
@@ -262,6 +262,7 @@ export default class LoginScreen extends React.Component {
 
             <TextInput
               placeholder="Your Email"
+              value={this.state.email}
               onChangeText={(text) => this.setState({ email: text })}
               style={{
                 height: 55,
@@ -282,6 +283,7 @@ export default class LoginScreen extends React.Component {
             >
               <TextInput
                 placeholder="Your Password"
+                value={this.state.password}
                 secureTextEntry={this.state.visible}
                 onChangeText={(text) => this.setState({ password: text })}
                 style={{
@@ -307,29 +309,39 @@ export default class LoginScreen extends React.Component {
             </View>
           </View>
 
-          {this.state.hasPins === true ? (
-            <View style={{ padding: 10 }}>
-              <Text
-                style={{ color: "white", fontSize: 16, fontWeight: "bold" }}
-              >
-                Pin
-              </Text>
+          <View style={{ padding: 10 }}>
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+              Pin
+            </Text>
 
-              <TextInput
-                placeholder="Pin"
-                value={this.state.pin}
-                onChangeText={(text) => this.setState({ pin: text })}
-                style={{
-                  height: 55,
-                  width: "100%",
-                  backgroundColor: "white",
-                  marginTop: 10,
-                  borderRadius: 50,
-                  paddingStart: 20,
-                }}
-              ></TextInput>
-            </View>
-          ) : null}
+            <TextInput
+              keyboardType="number-pad"
+              maxLength={4}
+              placeholder="Pin"
+              value={this.state.pin}
+              onChangeText={(text) => this.setState({ pin: text })}
+              style={{
+                height: 55,
+                width: "100%",
+                backgroundColor: "white",
+                marginTop: 10,
+                borderRadius: 50,
+                paddingStart: 20,
+              }}
+            ></TextInput>
+            <Text
+              onPress={() => this.props.navigation.navigate("ForgetPassword")}
+              style={{
+                color: "white",
+                fontSize: 16,
+                fontWeight: "bold",
+                marginTop: 15,
+                alignSelf: "flex-end",
+              }}
+            >
+              Forget Password?
+            </Text>
+          </View>
           {/* <View style={{ padding: 10 }}>
             <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
               PIN Number:

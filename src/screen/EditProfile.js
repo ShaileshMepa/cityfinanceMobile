@@ -18,6 +18,19 @@ import MenuDrawer from "react-native-side-drawer";
 import AsyncStorage from "@react-native-community/async-storage";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { Picker } from "@react-native-picker/picker";
+import DatePicker from "react-native-datepicker";
+import RadioForm, {
+  RadioButton,
+  RadioButtonInput,
+  RadioButtonLabel,
+} from "react-native-simple-radio-button";
+import moment from "moment";
+import { cos } from "react-native-reanimated";
+
+var radio_props = [
+  { label: "param1", value: 0 },
+  { label: "param2", value: 1 },
+];
 
 export class EditProfile extends Component {
   constructor(props) {
@@ -40,7 +53,7 @@ export class EditProfile extends Component {
       pin: "",
       phone: "",
       username: "",
-      dob: "",
+      dob: moment(new Date()).format("DD-MM-YYYY"),
       city: "",
       state: "",
       country: "",
@@ -62,6 +75,7 @@ export class EditProfile extends Component {
           mr: "Ms",
         },
       ],
+      date: "2016-05-15",
       colors: [
         {
           clr: "Red",
@@ -90,6 +104,36 @@ export class EditProfile extends Component {
         },
       ],
       RelationSelect: "Mrs",
+      SouthWales: "New South Wales",
+      States: [
+        {
+          state: "New South Wales",
+        },
+        {
+          state: "Victoria",
+        },
+        {
+          state: "Queensland",
+        },
+        {
+          state: "South Australia",
+        },
+        {
+          state: "Western Australia",
+        },
+        {
+          state: "Tasmania",
+        },
+        {
+          state: "Australian Capital Territory",
+        },
+        {
+          state: "Northern Territory",
+        },
+      ],
+      value: 0,
+      personal_address__c: "",
+      middlename: "",
     };
   }
 
@@ -126,16 +170,18 @@ export class EditProfile extends Component {
           this.setState({
             first_name: responseText?.data?.firstname,
             last_name: responseText?.data?.lastname,
-            email: responseText?.data?.mailing_address,
+            email: responseText?.data?.email,
             mobile: responseText?.data?.mobilephone,
-            Cardcolour: responseText?.data?.card_colour,
-            dob: responseText?.data?.date_of_birth,
+            Cardcolour: responseText?.data?.medicare_card_color__c,
+            dob: responseText?.data?.birthdate,
             Driver_license_number: responseText?.data?.driving_license_number,
             ID_Detail: responseText?.data?.id_detail,
-            Medicarecardnumber: responseText?.data?.medicare_card_number,
-            Referencenumber: responseText?.data?.reference_number,
+            Medicarecardnumber: responseText?.data?.card_number__c,
+            Referencenumber: responseText?.data?.reference_no__c,
             RelationSelect: responseText?.data?.salutation,
-            stateofissue: responseText?.data?.state_of_issue,
+            SouthWales: responseText?.data?.state_of_issue__c,
+            personal_address__c: responseText?.data.personal_address__c,
+            middlename: responseText?.data.middlename,
           });
         } else {
           // alert(responseText.message);
@@ -148,6 +194,7 @@ export class EditProfile extends Component {
 
   updateProfile = () => {
     let formData = new FormData();
+    console.log("moment>>", this.state.dob);
     formData.append("mobilephone", this.state.mobile);
     fetch("https://cityfinance-app.herokuapp.com/api/update-users-profile", {
       method: "POST",
@@ -161,11 +208,15 @@ export class EditProfile extends Component {
         birthdate: this.state.dob,
         email: this.state.email,
         ownerid: this.state.ID_Detail,
-        cf_type_c: "Medicare",
-        card_numberc: this.state.Medicarecardnumber,
-        state_of_issuec: this.state.stateofissue,
-        reference_noc: this.state.Referencenumber,
-        medicare_card_colorc: this.state.Cardcolour,
+        cf_type__c: "Medicare",
+        card_number__c: this.state.Medicarecardnumber,
+        state_of_issue__c: this.state.SouthWales,
+        reference_no__c: this.state.Referencenumber,
+        medicare_card_color__c: this.state.Cardcolour,
+        firstname: this.state.first_name,
+        lastname: this.state.last_name,
+        personal_address__c: this.state.personal_address__c,
+        middlename: this.state.middlename,
       }),
     })
       .then((response) => response.json())
@@ -234,7 +285,7 @@ export class EditProfile extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <View style={{ marginStart: 15 }}>
                   <Text
@@ -508,6 +559,13 @@ export class EditProfile extends Component {
     // this.setState({ selectedCIty: selectedCIty, Town: selectedCIty });
   };
 
+  //stateofissue
+  ChangeCitystateofissue = (selectedCIty) => {
+    console.log("Selected State", selectedCIty);
+    this.setState({ SouthWales: selectedCIty });
+    // this.setState({ selectedCIty: selectedCIty, Town: selectedCIty });
+  };
+
   ChangeCityColor = (selectedCIty) => {
     console.log("Selected State", selectedCIty);
     this.setState({ Cardcolour: selectedCIty });
@@ -707,7 +765,7 @@ export class EditProfile extends Component {
               }}
               source={
                 this.state.picture === ""
-                  ? require("../assets/photo.png")
+                  ? require("../assets/placeholder.png")
                   : { uri: this.state.picture }
               }
             />
@@ -741,7 +799,7 @@ export class EditProfile extends Component {
               marginTop: "5%",
             }}
           >
-            {/* <View
+            <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
             >
               <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000" }}>
@@ -763,10 +821,40 @@ export class EditProfile extends Component {
                 onChangeText={(text) => this.setState({ first_name: text })}
                 value={this.state.first_name}
                 placeholderTextColor={"#000000"}
-                editable={false}
               />
-            </View> */}
-            {/* <View
+            </View>
+
+            <View
+              style={{
+                width: "90%",
+                alignSelf: "center",
+                marginBottom: 10,
+                marginTop: "5%",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000" }}>
+                Middle Name
+              </Text>
+            </View>
+            <View style={{ width: "85%", alignSelf: "center" }}>
+              <TextInput
+                style={{
+                  fontSize: 15,
+                  fontFamily: "Poppins-Regular",
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  padding: 10,
+                }}
+                inputStyle={{ textAlign: "center" }}
+                placeholder={"Middle Name"}
+                onChangeText={(text) => this.setState({ middlename: text })}
+                value={this.state.middlename}
+                placeholderTextColor={"#000000"}
+              />
+            </View>
+
+            <View
               style={{
                 width: "90%",
                 alignSelf: "center",
@@ -793,9 +881,9 @@ export class EditProfile extends Component {
                 onChangeText={(text) => this.setState({ last_name: text })}
                 value={this.state.last_name}
                 placeholderTextColor={"#000000"}
-                editable={false}
               />
-            </View> */}
+            </View>
+
             <View
               style={{
                 width: "90%",
@@ -826,6 +914,42 @@ export class EditProfile extends Component {
                 editable={false}
               />
             </View>
+
+            <View
+              style={{
+                width: "90%",
+                alignSelf: "center",
+                marginBottom: 10,
+                marginTop: "5%",
+              }}
+            >
+              <Text style={{ fontSize: 15, fontWeight: "bold", color: "#000" }}>
+                Personal Address
+              </Text>
+            </View>
+            <View style={{ width: "85%", alignSelf: "center" }}>
+              <TextInput
+                style={{
+                  fontSize: 15,
+                  fontFamily: "Poppins-Regular",
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  padding: 10,
+                  height: 100,
+                  textAlignVertical: "top",
+                }}
+                inputStyle={{ textAlign: "center" }}
+                numberOfLines={2}
+                placeholder={"Personal Address"}
+                onChangeText={(text) =>
+                  this.setState({ personal_address__c: text })
+                }
+                value={this.state.personal_address__c}
+                placeholderTextColor={"#000000"}
+              />
+            </View>
+
             <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
             >
@@ -842,6 +966,7 @@ export class EditProfile extends Component {
             </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
+                keyboardType="number-pad"
                 style={{
                   fontSize: 15,
                   fontFamily: "Poppins-Regular",
@@ -962,7 +1087,7 @@ export class EditProfile extends Component {
               />
             </View> */}
 
-            <View
+            {/* <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
             >
               <Text
@@ -975,8 +1100,15 @@ export class EditProfile extends Component {
               >
                 ID Detail
               </Text>
-            </View>
-            <View style={{ width: "85%", alignSelf: "center" }}>
+            </View> */}
+            {/* <RadioForm
+              radio_props={radio_props}
+              initial={0}
+              onPress={(value) => {
+                this.setState({ value: value });
+              }}
+            /> */}
+            {/* <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
                 style={{
                   fontSize: 15,
@@ -993,9 +1125,9 @@ export class EditProfile extends Component {
                 placeholderTextColor={"#000000"}
                 editable={false}
               />
-            </View>
+            </View> */}
 
-            <View
+            {/* <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
             >
               <Text
@@ -1011,6 +1143,7 @@ export class EditProfile extends Component {
             </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
+                keyboardType="number-pad"
                 style={{
                   fontSize: 15,
                   fontFamily: "Poppins-Regular",
@@ -1027,7 +1160,7 @@ export class EditProfile extends Component {
                 value={this.state.Driver_license_number}
                 placeholderTextColor={"#000000"}
               />
-            </View>
+            </View> */}
 
             <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
@@ -1044,6 +1177,27 @@ export class EditProfile extends Component {
               </Text>
             </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
+              <View
+                style={{
+                  width: "100%",
+                  borderWidth: 1,
+                  borderRadius: 10,
+                }}
+              >
+                <Picker
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.ChangeCitystateofissue(itemValue)
+                  }
+                  selectedValue={this.state.SouthWales}
+                  dropdownIconColor="#CA6C26"
+                >
+                  {Object.entries(this.state.States).map(([key, v]) => (
+                    <Picker.Item label={v.state} value={v.state} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            {/* <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
                 style={{
                   fontSize: 15,
@@ -1059,7 +1213,7 @@ export class EditProfile extends Component {
                 value={this.state.stateofissue}
                 placeholderTextColor={"#000000"}
               />
-            </View>
+            </View> */}
 
             <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
@@ -1077,6 +1231,7 @@ export class EditProfile extends Component {
             </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
+                keyboardType="number-pad"
                 style={{
                   fontSize: 15,
                   fontFamily: "Poppins-Regular",
@@ -1109,8 +1264,9 @@ export class EditProfile extends Component {
                 Reference number
               </Text>
             </View>
-            {/* <View style={{ width: "85%", alignSelf: "center" }}>
+            <View style={{ width: "85%", alignSelf: "center" }}>
               <TextInput
+                keyboardType="number-pad"
                 style={{
                   fontSize: 15,
                   fontFamily: "Poppins-Regular",
@@ -1127,8 +1283,22 @@ export class EditProfile extends Component {
                 value={this.state.Referencenumber}
                 placeholderTextColor={"#000000"}
               />
-            </View> */}
+            </View>
 
+            <View
+              style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
+            >
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  color: "#000",
+                  marginTop: "5%",
+                }}
+              >
+                Card colour
+              </Text>
+            </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
               <View
                 style={{
@@ -1151,38 +1321,6 @@ export class EditProfile extends Component {
               </View>
             </View>
 
-            {/* <View
-              style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
-            >
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  color: "#000",
-                  marginTop: "5%",
-                }}
-              >
-                Card colour
-              </Text>
-            </View>
-            <View style={{ width: "85%", alignSelf: "center" }}>
-              <TextInput
-                style={{
-                  fontSize: 15,
-                  fontFamily: "Poppins-Regular",
-                  borderWidth: 0.5,
-                  borderRadius: 10,
-                  alignItems: "center",
-                  padding: 10,
-                }}
-                inputStyle={{ textAlign: "center" }}
-                placeholder={"Card colour"}
-                onChangeText={(text) => this.setState({ Cardcolour: text })}
-                value={this.state.Cardcolour}
-                placeholderTextColor={"#000000"}
-              />
-            </View> */}
-
             <View
               style={{ width: "90%", alignSelf: "center", marginBottom: 10 }}
             >
@@ -1198,7 +1336,44 @@ export class EditProfile extends Component {
               </Text>
             </View>
             <View style={{ width: "85%", alignSelf: "center" }}>
-              <TextInput
+              <DatePicker
+                style={{
+                  fontSize: 15,
+                  fontFamily: "Poppins-Regular",
+                  borderWidth: 0.5,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  padding: 10,
+                  width: "100%",
+                }}
+                date={this.state.dob}
+                mode="date"
+                placeholder="Select dob"
+                // format="DD-MM-YYYY"
+                minDate="1800-05-01"
+                maxDate={new Date()}
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{
+                  dateIcon: {
+                    // position: "absolute",
+                    // left: 0,
+                    // top: 4,
+                    // marginLeft: 0,
+                  },
+                  dateInput: {
+                    borderWidth: 0,
+                    height: 45,
+                    // marginLeft: 36,
+                  },
+                  // ... You can check the source to find the other keys.
+                }}
+                onDateChange={(date) => {
+                  console.log(date);
+                  this.setState({ dob: date });
+                }}
+              />
+              {/* <TextInput
                 style={{
                   fontSize: 15,
                   fontFamily: "Poppins-Regular",
@@ -1212,7 +1387,7 @@ export class EditProfile extends Component {
                 onChangeText={(text) => this.setState({ dob: text })}
                 value={this.state.dob}
                 placeholderTextColor={"#000000"}
-              />
+              /> */}
             </View>
 
             {/* <View

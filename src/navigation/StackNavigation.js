@@ -22,6 +22,7 @@ import ClicktoSign from "../screen/ClicktoSign";
 import Documenttosign from "../screen/Documenttosign";
 import ThankyouScreen from "../screen/ThankyouScreen";
 import MakeApayment from "../screen/MakeApayment";
+import ForgetPassword from "../screen/ForgetPassword";
 
 const Stack = createNativeStackNavigator();
 const StackNavigation = () => {
@@ -52,11 +53,7 @@ const StackNavigation = () => {
         <Stack.Screen name="Documenttosign" component={Documenttosign} />
         <Stack.Screen name="ThankyouScreen" component={ThankyouScreen} />
         <Stack.Screen name="MakeApayment" component={MakeApayment} />
-
-        {/* <Stack.Screen
-          name="CurrentApplication"
-          component={CurrentApplication}
-        /> */}
+        <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
       </Stack.Navigator>
     </NavigationContainer>
   );

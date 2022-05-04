@@ -50,6 +50,13 @@ export class Capturereference extends Component {
       thankyoufunded: false,
       DocumentUpload: this.props.route.params.DocumentImages,
       curruntData: this.props.route.params.curruntData,
+      imageDocument1: this.props.route.params.imageDocument1,
+      imageDocument2: this.props.route.params.imageDocument2,
+      imageDocument3: this.props.route.params.imageDocument3,
+      imagePath2: this.props.route.params.imagePath2,
+      imagePath3: this.props.route.params.imagePath3,
+      imagetype2: this.props.route.params.imagetype2,
+      imagetype3: this.props.route.params.imagetype3,
 
       relationshipList: [
         {
@@ -280,7 +287,7 @@ export class Capturereference extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -507,7 +514,18 @@ export class Capturereference extends Component {
       })
         .then((response) => response.json())
         .then((responseText) => {
-          console.log("Click TO Sifgn", responseText);
+          console.log("Click TO Sifgn pushing", {
+            ref: this.state.pushRef,
+            DocumentImages: this.state.DocumentUpload,
+            curruntData: this.state.curruntData,
+            imageDocument1: this.state.imageDocument1,
+            imageDocument2: this.state.imageDocument2,
+            imageDocument3: this.state.imageDocument3,
+            imagePath2: this.state.imagePath2,
+            imagetype2: this.state.imagetype2,
+            imagePath3: this.state.imagePath3,
+            imagetype3: this.state.imagetype3,
+          });
           if (responseText.success === true) {
             this.setState({
               firstnamereq: "",
@@ -519,6 +537,13 @@ export class Capturereference extends Component {
               ref: this.state.pushRef,
               DocumentImages: this.state.DocumentUpload,
               curruntData: this.state.curruntData,
+              imageDocument1: this.state.imageDocument1,
+              imageDocument2: this.state.imageDocument2,
+              imageDocument3: this.state.imageDocument3,
+              imagePath2: this.state.imagePath2,
+              imagetype2: this.state.imagetype2,
+              imagePath3: this.state.imagePath3,
+              imagetype3: this.state.imagetype3,
             });
             // alert("Referance Added Successfully!");
 
@@ -604,7 +629,7 @@ export class Capturereference extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>

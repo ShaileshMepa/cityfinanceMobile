@@ -39,7 +39,7 @@ export class ClicktoSign extends Component {
       uploadDoc: false,
       imageDocument: [],
       DocumentUpload: null,
-      ref: null,
+      ref: [],
       isSelectImage: "",
       RegisterData: "",
       imagetype: "",
@@ -52,6 +52,14 @@ export class ClicktoSign extends Component {
       openModal: false,
       CurrSelectedImage: "",
       curruntData: this.props.route.params.curruntData,
+      imageDocument1: this.props.route.params.imageDocument1,
+      imageDocument2: this.props.route.params.imageDocument2,
+      imageDocument3: this.props.route.params.imageDocument3,
+      imagePath2: this.props.route.params.imagePath2,
+      imagePath3: this.props.route.params.imagePath3,
+      imagetype2: this.props.route.params.imagetype2,
+      imagetype3: this.props.route.params.imagetype3,
+      documentsStatus: false,
     };
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
@@ -196,6 +204,45 @@ export class ClicktoSign extends Component {
       .catch((error) => {
         // alert(error);
       });
+
+    fetch("https://cityfinance-app.herokuapp.com/api/get-references", {
+      method: "GET",
+      headers: new Headers({
+        "Content-Type": "application/json", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        if (responseText.status === "success") {
+        } else {
+          // alert(responseText.message);
+        }
+      })
+      .catch((error) => {
+        // alert(error);
+      });
+
+    fetch(
+      "https://cityfinance-app.herokuapp.com/api/get-application-documents",
+      {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json", // <-- Specifying the Content-Type
+          Authorization: "Bearer " + this.state.authToken,
+        }),
+        body: JSON.stringify({
+          application_id: this.state.loanuniqueno,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .then((responseText) => {})
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
   };
 
   selectDocument = () => {
@@ -226,6 +273,7 @@ export class ClicktoSign extends Component {
       uri: this.state.imagePath,
       type: this.state.imagetype,
       name: "image.png",
+      loanuniqueno: this.state.loanuniqueno,
     });
     const RegisterData = new FormData();
     RegisterData.append("file", {
@@ -233,7 +281,7 @@ export class ClicktoSign extends Component {
       type: this.state.imagetype,
       name: "image.png",
     });
-    RegisterData.append("applicationid", "aAr1e00000000QbCAI");
+    RegisterData.append("applicationid", this.state.loanuniqueno);
     console.log("RegisterData", JSON.stringify({ RegisterData }));
     fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
       method: "POST",
@@ -286,10 +334,22 @@ export class ClicktoSign extends Component {
   };
 
   docavigate = () => {
-    if (this.state.ref.length <= 2) {
-      alert("Please add 3 References!");
+    if (
+      this.state.imageDocument1 === null ||
+      this.state.imageDocument2 === null ||
+      this.state.imageDocument3 === null
+    ) {
+      alert("Upload: Please upload 1 ID and 3 Payslips.");
     } else {
-      this.props.navigation.navigate("Documenttosign");
+      if (this.state.ref.length === 0) {
+        alert("Please add 3 References!");
+      } else {
+        if (this.state.ref.length <= 2) {
+          alert("Please add 3 References!");
+        } else {
+          this.props.navigation.navigate("Documenttosign");
+        }
+      }
     }
   };
 
@@ -323,7 +383,7 @@ export class ClicktoSign extends Component {
                     resizeMode: "contain",
                     borderRadius: 10,
                   }}
-                  source={require("../assets/photo.png")}
+                  source={require("../assets/placeholder.png")}
                 />
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("EditProfile")}
@@ -595,6 +655,160 @@ export class ClicktoSign extends Component {
     this.componentDidMount();
   };
 
+  getApplicationDocuments1 = () => {
+    const RegisterData = new FormData();
+    RegisterData.append("file", {
+      uri: this.state.imagePath,
+      type: this.state.imagetype,
+      name: "image.png",
+    });
+    RegisterData.append("applicationid", this.state.curruntData.name);
+    console.log("RegisterData", JSON.stringify({ RegisterData }));
+    fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "multipart/form-data", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: RegisterData,
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log("getApplicationDocuments", responseText);
+      })
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
+  };
+
+  getApplicationDocuments2 = () => {
+    const RegisterData = new FormData();
+    RegisterData.append("file", {
+      uri: this.state.imagePath2,
+      type: this.state.imagetype2,
+      name: "image.png",
+    });
+    RegisterData.append("applicationid", this.state.curruntData.name);
+    console.log("RegisterData", JSON.stringify({ RegisterData }));
+    fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "multipart/form-data", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: RegisterData,
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log("getApplicationDocuments", responseText);
+      })
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
+  };
+
+  getApplicationDocuments3 = () => {
+    const RegisterData = new FormData();
+    RegisterData.append("file", {
+      uri: this.state.imagePath3,
+      type: this.state.imagetype3,
+      name: "image3.png",
+    });
+    RegisterData.append("applicationid", this.state.curruntData.name);
+    console.log("RegisterData", JSON.stringify({ RegisterData }));
+    fetch("https://cityfinance-app.herokuapp.com/api/uplodeuserDocument", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "multipart/form-data", // <-- Specifying the Content-Type
+        Authorization: "Bearer " + this.state.authToken,
+      }),
+      body: RegisterData,
+    })
+      .then((response) => response.json())
+      .then((responseText) => {
+        console.log("getApplicationDocuments", responseText);
+      })
+      .catch((error) => {
+        console.log("getApplicationDocuments error", error);
+
+        // alert(error);
+      });
+  };
+
+  AddselectDocument1 = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      includeBase64: false,
+      includeExif: false,
+      compressImageQuality: 0.1,
+      multiple: false,
+    }).then((image) => {
+      // this.state.DocumentUpload.push(image);
+
+      this.setState({
+        imageDocument1: image,
+        imagetype: image?.mime,
+        imagePath: image?.path,
+      });
+      // this.componentDidMount();
+      setTimeout(() => {
+        this.getApplicationDocuments1();
+      }, 500);
+    });
+  };
+
+  AddselectDocument2 = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      includeBase64: false,
+      includeExif: false,
+      compressImageQuality: 0.1,
+      multiple: false,
+    }).then((image) => {
+      // this.state.DocumentUpload.push(image);
+
+      this.setState({
+        imageDocument2: image,
+        imagetype2: image?.mime,
+        imagePath2: image?.path,
+      });
+      // this.componentDidMount();
+      setTimeout(() => {
+        this.getApplicationDocuments2();
+      }, 500);
+    });
+  };
+
+  AddselectDocument3 = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      includeBase64: false,
+      includeExif: false,
+      compressImageQuality: 0.1,
+      multiple: false,
+    }).then((image) => {
+      // this.state.DocumentUpload.push(image);
+
+      this.setState({
+        imageDocument3: image,
+
+        imagetype3: image?.mime,
+        imagePath3: image?.path,
+      });
+      // this.componentDidMount();
+      setTimeout(() => {
+        this.getApplicationDocuments3();
+      }, 500);
+    });
+  };
+
   render() {
     // const { DocumentImages } = this.props.route.params;
     console.log("this.state.ref.length", this.state.ref);
@@ -729,7 +943,7 @@ export class ClicktoSign extends Component {
                   shadowColor: "white",
                   elevation: 0.5,
                 }}
-                source={require("../assets/photo.png")}
+                source={require("../assets/placeholder.png")}
               />
             </View>
           </View>
@@ -1031,33 +1245,102 @@ export class ClicktoSign extends Component {
                       </Text>
                     </TouchableOpacity>
                   </View> */}
+
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignSelf: "center",
+                      justifyContent: "space-around",
+                      alignItems: "flex-start",
                     }}
                   >
-                    <FlatList
-                      data={this.state.DocumentUpload}
-                      keyExtractor={(item, index) => index.toString()}
-                      renderItem={({ item, index }) => {
-                        return (
-                          <TouchableOpacity
-                            onPress={() => this.OpenModal(item)}
-                            style={{
-                              justifyContent: "space-between",
-                              flexDirection: "row",
-                              width: "90%",
-                              backgroundColor: "#FFFFFF",
-                              marginTop: "3%",
-                              marginBottom: "3%",
-                              padding: 8,
-                              alignSelf: "center",
-                              borderRadius: 10,
-                              borderWidth: 1,
-                            }}
-                          >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        alignSelf: "center",
+                        color: "white",
+                        fontWeight: "bold",
+                        color: "black",
+                      }}
+                    >
+                      Document:
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.setState({
+                          documentsStatus: !this.state.documentsStatus,
+                        })
+                      }
+                      // onPress={() =>
+                      //   this.props.navigation.navigate("DocumentScreen", {
+                      //     DocumentImages: this.state.imageDocument,
+                      //     curruntData: this.state.curruntData,
+                      //   })
+                      // }
+                      style={{
+                        width: "50%",
+                        height: 50,
+                        backgroundColor: "#FFCB05",
+                        borderRadius: 50,
+                        justifyContent: "space-evenly",
+                        alignSelf: "flex-end",
+                        marginBottom: 15,
+                        marginTop: 10,
+                        flexDirection: "row",
+                      }}
+                    >
+                      <View
+                        style={{
+                          justifyContent: "center",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <Image
+                          source={require("../assets/upload.png")}
+                          style={{ alignSelf: "center" }}
+                        />
+                        <Image source={require("../assets/upload2.png")} />
+                      </View>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          alignSelf: "center",
+                          color: "white",
+                          fontWeight: "bold",
+                          color: "black",
+                        }}
+                      >
+                        Upload Document
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {this.state.documentsStatus === false ? null : (
+                    <View
+                      style={{
+                        justifyContent: "space-between",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.state.imageDocument1 != null
+                            ? null
+                            : this.AddselectDocument1()
+                        }
+                        style={{
+                          justifyContent: "space-between",
+                          flexDirection: "row",
+                          width: "90%",
+                          backgroundColor: "#FFFFFF",
+                          marginTop: "3%",
+                          marginBottom: "3%",
+                          padding: 8,
+                          alignSelf: "center",
+                          borderRadius: 10,
+                          borderWidth: 1,
+                        }}
+                      >
+                        {this.state.imageDocument1 != null ? (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
                             <View
                               style={{
                                 width: "5%",
@@ -1072,12 +1355,12 @@ export class ClicktoSign extends Component {
                                   color: "#000",
                                 }}
                               >
-                                {index + 1})
+                                1.
                               </Text>
                             </View>
                             <View
                               style={{
-                                width: "60%",
+                                width: "72%",
                                 flexDirection: "row",
                                 alignItems: "center",
                               }}
@@ -1090,30 +1373,322 @@ export class ClicktoSign extends Component {
                                   color: "#000",
                                 }}
                               >
-                                {index === 0
-                                  ? "My ID"
-                                  : index === 1
-                                  ? "Payslip 1"
-                                  : index === 2
-                                  ? "Payslip 2"
-                                  : ""}
+                                My ID
                               </Text>
                             </View>
-                            {/* <TouchableOpacity
+                            <TouchableOpacity
+                              onPress={() => this.AddselectDocument1()}
                               style={{ width: "10%", alignItems: "flex-end" }}
                             >
                               <Image source={require("../assets/Edit.png")} />
                             </TouchableOpacity>
                             <TouchableOpacity
+                              onPress={() =>
+                                this.setState({ imageDocument1: null })
+                              }
                               style={{ width: "10%", alignItems: "flex-end" }}
                             >
                               <Image source={require("../assets/delete.png")} />
-                            </TouchableOpacity> */}
-                          </TouchableOpacity>
-                        );
-                      }}
-                    />
-                  </View>
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
+                            <View
+                              style={{
+                                width: "100%",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                  alignSelf: "center",
+                                }}
+                              >
+                                + Please Upload My ID
+                              </Text>
+                            </View>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.state.imageDocument2 != null
+                            ? null
+                            : this.AddselectDocument2()
+                        }
+                        style={{
+                          justifyContent: "space-between",
+                          flexDirection: "row",
+                          width: "90%",
+                          backgroundColor: "#FFFFFF",
+                          marginTop: "3%",
+                          marginBottom: "3%",
+                          padding: 8,
+                          alignSelf: "center",
+                          borderRadius: 10,
+                          borderWidth: 1,
+                        }}
+                      >
+                        {this.state.imageDocument2 != null ? (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
+                            <View
+                              style={{
+                                width: "5%",
+                                alignSelf: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                }}
+                              >
+                                2.
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                width: "72%",
+                                flexDirection: "row",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                }}
+                              >
+                                Payslip 1
+                              </Text>
+                            </View>
+                            <TouchableOpacity
+                              onPress={() => this.AddselectDocument2()}
+                              style={{ width: "10%", alignItems: "flex-end" }}
+                            >
+                              <Image source={require("../assets/Edit.png")} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.setState({ imageDocument2: null })
+                              }
+                              style={{ width: "10%", alignItems: "flex-end" }}
+                            >
+                              <Image source={require("../assets/delete.png")} />
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
+                            <View
+                              style={{
+                                width: "100%",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                  alignSelf: "center",
+                                }}
+                              >
+                                + Please Upload Payslip 1
+                              </Text>
+                            </View>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.state.imageDocument3 != null
+                            ? null
+                            : this.AddselectDocument3()
+                        }
+                        style={{
+                          justifyContent: "space-between",
+                          flexDirection: "row",
+                          width: "90%",
+                          backgroundColor: "#FFFFFF",
+                          marginTop: "3%",
+                          marginBottom: "3%",
+                          padding: 8,
+                          alignSelf: "center",
+                          borderRadius: 10,
+                          borderWidth: 1,
+                        }}
+                      >
+                        {this.state.imageDocument3 != null ? (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
+                            <View
+                              style={{
+                                width: "5%",
+                                alignSelf: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                }}
+                              >
+                                3.
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                width: "72%",
+                                flexDirection: "row",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                }}
+                              >
+                                Payslip 2
+                              </Text>
+                            </View>
+                            <TouchableOpacity
+                              onPress={() => this.AddselectDocument3()}
+                              style={{ width: "10%", alignItems: "flex-end" }}
+                            >
+                              <Image source={require("../assets/Edit.png")} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.setState({ imageDocument3: null })
+                              }
+                              style={{ width: "10%", alignItems: "flex-end" }}
+                            >
+                              <Image source={require("../assets/delete.png")} />
+                            </TouchableOpacity>
+                          </View>
+                        ) : (
+                          <View style={{ flex: 1, flexDirection: "row" }}>
+                            <View
+                              style={{
+                                width: "100%",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  textAlign: "center",
+                                  fontWeight: "bold",
+                                  fontSize: 16,
+                                  color: "#000",
+                                  alignSelf: "center",
+                                }}
+                              >
+                                + Please Upload Payslip 2
+                              </Text>
+                            </View>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+
+                      {/* <FlatList
+    data={this.state.DocumentUpload}
+    renderItem={({ item, index }) => {
+      return (
+        <TouchableOpacity
+          onPress={() => this.OpenModal(item)}
+          style={{
+            justifyContent: "space-between",
+            flexDirection: "row",
+            width: "90%",
+            backgroundColor: "#FFFFFF",
+            marginTop: "3%",
+            marginBottom: "3%",
+            padding: 8,
+            alignSelf: "center",
+            borderRadius: 10,
+            borderWidth: 1,
+          }}
+        >
+          <View
+            style={{
+              width: "5%",
+              alignSelf: "center",
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "#000",
+              }}
+            >
+              {index + 1}.
+            </Text>
+          </View>
+          <View
+            style={{
+              width: "60%",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 16,
+                color: "#000",
+              }}
+            >
+              {index === 0
+                ? "My ID"
+                : index === 1
+                ? "Payslip 1"
+                : index === 2
+                ? "Payslip 2"
+                : ""}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => this.updateDocument(item, index)}
+            style={{ width: "10%", alignItems: "flex-end" }}
+          >
+            <Image source={require("../assets/Edit.png")} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.deleteDocument(item, index)}
+            style={{ width: "10%", alignItems: "flex-end" }}
+          >
+            <Image source={require("../assets/delete.png")} />
+          </TouchableOpacity>
+        </TouchableOpacity>
+      );
+    }}
+  /> */}
+                    </View>
+                  )}
                   <View
                     style={{
                       flexDirection: "row",
@@ -1137,6 +1712,13 @@ export class ClicktoSign extends Component {
                         this.props.navigation.navigate("Capturereference", {
                           DocumentImages: this.state.DocumentUpload,
                           curruntData: this.state.curruntData,
+                          imageDocument1: this.state.imageDocument1,
+                          imageDocument2: this.state.imageDocument2,
+                          imageDocument3: this.state.imageDocument3,
+                          imagePath2: this.state.imagePath2,
+                          imagetype2: this.state.imagetype2,
+                          imagePath3: this.state.imagePath3,
+                          imagetype3: this.state.imagetype3,
                         })
                       }
                       style={{
@@ -1270,7 +1852,7 @@ export class ClicktoSign extends Component {
                         color: "black",
                       }}
                     >
-                      Click to sign
+                      Submit for Review
                     </Text>
                   </TouchableOpacity>
                   <View
